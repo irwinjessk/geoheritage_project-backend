@@ -5,6 +5,7 @@ app_name = 'heritage'
 
 urlpatterns = [
     path('', views.patrimoine_list, name='list'),
+    path('map/', views.patrimoine_map, name='map'),
     path('search/', views.patrimoine_search, name='search'),
     path('nearby/', views.patrimoine_nearby, name='nearby'),
     path('<int:pk>/', views.patrimoine_detail, name='detail'),

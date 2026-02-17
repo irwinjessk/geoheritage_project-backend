@@ -1,0 +1,305 @@
+{
+	"info": {
+		"_postman_id": "b1a2b3c-4d5e-8f9a-9b7c-1d2e3f4a5b6",
+		"name": "GeoHeritage API JWT",
+		"description": "Collection Postman pour tester l'API JWT GeoHeritage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Login JWT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/auth/login/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔄 Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"refresh\": \"{{refresh_token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/auth/refresh/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "👤 User Profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/auth/profile/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🏛️ List Patrimoines",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/patrimoines/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"patrimoines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🏗️ Create Patrimoine",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nom\": \"Test API Patrimoine\",\n\t\"description\": \"Patrimoine créé via l'API JWT\",\n\t\"type\": \"monument\",\n\t\"latitude\": \"48.8566\",\n\t\"longitude\": \"2.3522\",\n\t\"ville\": \"Paris\",\n\t\"date_creation\": \"2024-01-01\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/patrimoines/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"patrimoines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🔍 Get Patrimoine Detail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/patrimoines/{{patrimoine_id}}/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"patrimoines",
+						"{{patrimoine_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "🗺️ Nearby Search",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/patrimoines/nearby/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"patrimoines",
+						"nearby"
+					]
+				},
+				"query": [
+					{
+						"key": "lat",
+						"value": "48.8566",
+						"description": "Latitude pour la recherche"
+					},
+					{
+						"key": "lng",
+						"value": "2.3522",
+						"description": "Longitude pour la recherche"
+					},
+					{
+						"key": "radius",
+						"value": "10",
+						"description": "Rayon de recherche en km"
+					}
+				]
+			},
+			"response": []
+		},
+		{
+			"name": "🚪 Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"refresh\": \"{{refresh_token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8005/api/v1/auth/logout/",
+					"host": [
+						"127.0.0.1:8005"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "Token d'accès JWT obtenu après login"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string",
+			"description": "Token de rafraîchissement JWT"
+		},
+		{
+			"key": "patrimoine_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID du patrimoine pour les tests de détail/modification"
+		}
+	]
+}

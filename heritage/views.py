@@ -1,7 +1,13 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
 from django.db.models import Q
+from django.core.paginator import Paginator
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+import json
 from account.decorators import can_edit_patrimoine, contributeur_required, get_user_level
 from .models import Patrimoine
 from account.models import User
@@ -122,6 +128,33 @@ def patrimoine_search(request):
     return render(request, 'heritage/search.html', {
         'patrimoines': patrimoines,
         'query': query
+    })
+
+
+def patrimoine_map(request):
+    """
+    Vue pour afficher la carte des patrimoines
+    """
+    patrimoines = Patrimoine.objects.all()
+    
+    # Préparer les données pour la carte
+    sites_data = []
+    for patrimoine in patrimoines:
+        sites_data.append({
+            'id': patrimoine.pk,
+            'nom': patrimoine.nom,
+            'description': patrimoine.description[:100] + '...' if len(patrimoine.description) > 100 else patrimoine.description,
+            'type': patrimoine.type,
+            'lat': float(patrimoine.latitude),
+            'lng': float(patrimoine.longitude),
+            'ville': patrimoine.ville,
+            'url': reverse('heritage:detail', args=[patrimoine.pk]),
+            'photo_url': patrimoine.photo_url
+        })
+    
+    return render(request, 'heritage/map.html', {
+        'sites': json.dumps(sites_data),
+        'sites_count': len(sites_data)
     })
 
 
