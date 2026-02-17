@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Carte des sites - GeoHeritage{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-map me-2"></i>Carte des sites patrimoniaux</h2>
+    <div>
+        <button class="btn btn-outline-secondary me-2" id="filter-btn">
+            <i class="fas fa-filter me-1"></i>Filtrer
+        </button>
+        <a href="{% url 'heritage:list' %}" class="btn btn-primary">
+            <i class="fas fa-list me-1"></i>Vue liste
+        </a>
+    </div>
+</div>
+
+<!-- Filter Panel (Hidden by default) -->
+<div class="card mb-4" id="filter-panel" style="display: none;">
+    <div class="card-body">
+        <h5><i class="fas fa-filter me-2"></i>Filtres</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Catégorie</label>
+                <select id="category-filter" class="form-select">
+                    <option value="">Toutes les catégories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Statut</label>
+                <select id="status-filter" class="form-select">
+                    <option value="">Tous les statuts</option>
+                    <option value="approved">Approuvés</option>
+                    <option value="pending">En attente</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Recherche</label>
+                <input type="text" id="search-filter" class="form-control" placeholder="Rechercher un site...">
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-primary" id="apply-filters">
+                <i class="fas fa-check me-1"></i>Appliquer
+            </button>
+            <button class="btn btn-outline-secondary" id="reset-filters">
+                <i class="fas fa-undo me-1"></i>Réinitialiser
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Map Container -->
+<div class="card">
+    <div class="card-body p-0">
+        <div id="heritage-map" style="height: 600px; width: 100%;"></div>
+    </div>
+</div>
+
+<!-- Map Legend -->
+<div class="card mt-4">
+    <div class="card-body">
+        <h6><i class="fas fa-info-circle me-2"></i>Légende</h6>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="bg-primary rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                    <span>Sites culturels</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="bg-success rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                    <span>Sites naturels</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="bg-warning rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                    <span>Sites historiques</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="bg-info rounded-circle me-2" style="width: 12px; height: 12px;"></div>
+                    <span>Sites archéologiques</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Site Details Modal -->
+<div class="modal fade" id="siteModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="siteModalTitle">Détails du site</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="siteModalBody">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="viewDetailsBtn">Voir détails</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-primary" id="total-sites">{{ sites|length }}</h4>
+                <p class="mb-0">Sites total</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-success" id="visible-sites">{{ sites|length }}</h4>
+                <p class="mb-0">Sites visibles</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-info" id="countries-count">{{ countries_count }}</h4>
+                <p class="mb-0">Pays</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-warning" id="categories-count">{{ categories|length }}</h4>
+                <p class="mb-0">Catégories</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    #heritage-map {
+        border-radius: 8px;
+    }
+    .site-popup {
+        min-width: 200px;
+    }
+    .site-popup img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Code sera ajouté plus tard
+</script>
+{% endblock %}

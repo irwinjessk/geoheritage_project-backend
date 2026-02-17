@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Sites Patrimoniaux - GeoHeritage{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-monument me-2"></i>Sites Patrimoniaux</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'heritage:create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Ajouter un site
+        </a>
+    {% endif %}
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher un site..." value="{{ request.GET.q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="">Toutes les catégories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">Tous les statuts</option>
+                    <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approuvés</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>En attente</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-search me-1"></i>Rechercher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results Count -->
+<div class="mb-3">
+    <p class="text-muted">
+        {% if sites %}
+            {{ sites|length }} site{{ sites|length|pluralize }} trouvé{{ sites|length|pluralize }}
+        {% else %}
+            Aucun site trouvé
+        {% endif %}
+    </p>
+</div>
+
+<!-- Sites Grid -->
+<div class="row">
+    {% for site in sites %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if site.image %}
+                    <img src="{{ site.image.url }}" class="card-img-top" alt="{{ site.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-monument fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ site.name }}</h5>
+                    <p class="card-text">{{ site.description|truncatewords:20 }}</p>
+                    
+                    <div class="mb-2">
+                        <span class="badge bg-primary">{{ site.category.name }}</span>
+                        <span class="badge bg-{{ site.status|yesno:'success,warning' }}">
+                            {{ site.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    {% if site.location %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ site.location.city }}, {{ site.location.country }}
+                        </p>
+                    {% endif %}
+                    
+                    <div class="mt-auto">
+                        <a href="{% url 'heritage:detail' site.id %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>Voir détails
+                        </a>
+                        
+                        {% if user.is_authenticated and site.created_by == user %}
+                            <a href="{% url 'heritage:edit' site.id %}" class="btn btn-outline-secondary btn-sm ms-2">
+                                <i class="fas fa-edit me-1"></i>Modifier
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-monument fa-4x text-muted mb-3"></i>
+                <h4>Aucun site patrimonial trouvé</h4>
+                <p class="text-muted">
+                    {% if user.is_authenticated %}
+                        Soyez le premier à ajouter un site patrimonial !
+                        <a href="{% url 'heritage:create' %}" class="btn btn-primary ms-2">
+                            <i class="fas fa-plus me-1"></i>Ajouter un site
+                        </a>
+                    {% else %}
+                        <a href="{% url 'account:login' %}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>Connectez-vous pour ajouter un site
+                        </a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+    <nav aria-label="Pagination des sites">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Premier</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Précédent</a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Suivant</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Dernier</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    .card-img-top {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+</style>
+{% endblock %}

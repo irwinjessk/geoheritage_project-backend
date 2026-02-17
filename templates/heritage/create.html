@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter un site - GeoHeritage{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="text-center">
+                    <i class="fas fa-plus me-2"></i>Ajouter un site patrimonial
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Basic Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5><i class="fas fa-info-circle me-2"></i>Informations de base</h5>
+                            <hr>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                <i class="fas fa-monument me-1"></i>Nom du site *
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                <i class="fas fa-tag me-1"></i>Catégorie *
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger">
+                                    {{ form.category.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>Description *
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger">
+                                    {{ form.description.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Décrivez le site, son histoire, son importance...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Localisation</h5>
+                            <hr>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">
+                                <i class="fas fa-home me-1"></i>Adresse
+                            </label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger">
+                                    {{ form.address.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">
+                                <i class="fas fa-city me-1"></i>Ville *
+                            </label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <div class="text-danger">
+                                    {{ form.city.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.country.id_for_label }}" class="form-label">
+                                <i class="fas fa-globe me-1"></i>Pays *
+                            </label>
+                            {{ form.country }}
+                            {% if form.country.errors %}
+                                <div class="text-danger">
+                                    {{ form.country.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.latitude.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-pin me-1"></i>Latitude
+                            </label>
+                            {{ form.latitude }}
+                            {% if form.latitude.errors %}
+                                <div class="text-danger">
+                                    {{ form.latitude.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.longitude.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-pin me-1"></i>Longitude
+                            </label>
+                            {{ form.longitude }}
+                            {% if form.longitude.errors %}
+                                <div class="text-danger">
+                                    {{ form.longitude.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-12">
+                            <button type="button" class="btn btn-outline-secondary" id="geolocate-btn">
+                                <i class="fas fa-crosshairs me-2"></i>Utiliser ma position actuelle
+                            </button>
+                            <div class="form-text">Cliquez pour obtenir automatiquement vos coordonnées GPS</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5><i class="fas fa-book me-2"></i>Informations additionnelles</h5>
+                            <hr>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.historical_significance.id_for_label }}" class="form-label">
+                                <i class="fas fa-history me-1"></i>Signification historique
+                            </label>
+                            {{ form.historical_significance }}
+                            {% if form.historical_significance.errors %}
+                                <div class="text-danger">
+                                    {{ form.historical_significance.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Décrivez l'importance historique du site</div>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.cultural_importance.id_for_label }}" class="form-label">
+                                <i class="fas fa-palette me-1"></i>Importance culturelle
+                            </label>
+                            {{ form.cultural_importance }}
+                            {% if form.cultural_importance.errors %}
+                                <div class="text-danger">
+                                    {{ form.cultural_importance.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Décrivez l'importance culturelle du site</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Images -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5><i class="fas fa-camera me-2"></i>Images</h5>
+                            <hr>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.image.id_for_label }}" class="form-label">
+                                <i class="fas fa-image me-1"></i>Image principale
+                            </label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="text-danger">
+                                    {{ form.image.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Choisissez une image représentative du site</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.gallery_images.id_for_label }}" class="form-label">
+                                <i class="fas fa-images me-1"></i>Galerie d'images
+                            </label>
+                            {{ form.gallery_images }}
+                            {% if form.gallery_images.errors %}
+                                <div class="text-danger">
+                                    {{ form.gallery_images.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Ajoutez plusieurs images (Ctrl+Clic pour sélectionner)</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terms and Submit -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        Je certifie que les informations fournies sont exactes et j'ai les droits sur les images partagées.
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'heritage:list' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Annuler
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Sauvegarder le site
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-control {
+        border-radius: 8px;
+    }
+    .form-select {
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('geolocate-btn').addEventListener('click', function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('id_latitude').value = position.coords.latitude.toFixed(6);
+            document.getElementById('id_longitude').value = position.coords.longitude.toFixed(6);
+        }, function(error) {
+            alert('Impossible d\'obtenir votre position: ' + error.message);
+        });
+    } else {
+        alert('La géolocalisation n\'est pas supportée par votre navigateur');
+    }
+});
+</script>
+{% endblock %}

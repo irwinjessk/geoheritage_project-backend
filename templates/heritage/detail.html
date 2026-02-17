@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ site.name }} - GeoHeritage{% endblock %}
+
+{% block content %}
+<!-- Header with Image -->
+<div class="card mb-4">
+    {% if site.image %}
+        <img src="{{ site.image.url }}" class="card-img-top" alt="{{ site.name }}" style="height: 400px; object-fit: cover;">
+    {% else %}
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+            <i class="fas fa-monument fa-5x text-muted"></i>
+        </div>
+    {% endif %}
+    
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{{ site.name }}</h1>
+                <p class="lead">{{ site.description }}</p>
+                
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2">{{ site.category.name }}</span>
+                    <span class="badge bg-{{ site.status|yesno:'success,warning' }}">
+                        {{ site.get_status_display }}
+                    </span>
+                </div>
+                
+                {% if site.location %}
+                    <p class="text-muted">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        {{ site.location.address }}, {{ site.location.city }}, {{ site.location.country }}
+                    </p>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-4 text-end">
+                {% if user.is_authenticated %}
+                    <div class="btn-group-vertical" role="group">
+                        {% if site.created_by == user or user.is_staff %}
+                            <a href="{% url 'heritage:edit' site.id %}" class="btn btn-outline-primary mb-2">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                        {% endif %}
+                        
+                        <button class="btn btn-outline-success mb-2">
+                            <i class="fas fa-heart me-2"></i>Aimer
+                        </button>
+                        
+                        <button class="btn btn-outline-info mb-2">
+                            <i class="fas fa-share me-2"></i>Partager
+                        </button>
+                        
+                        <button class="btn btn-outline-warning">
+                            <i class="fas fa-bookmark me-2"></i>Sauvegarder
+                        </button>
+                    </div>
+                {% else %}
+                    <a href="{% url 'account:login' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Connectez-vous pour interagir
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Information -->
+<div class="row">
+    <div class="col-md-8">
+        <!-- Description -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Description détaillée</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ site.description|linebreaks }}</p>
+                
+                {% if site.historical_significance %}
+                    <h6 class="mt-4">Signification historique</h6>
+                    <p>{{ site.historical_significance|linebreaks }}</p>
+                {% endif %}
+                
+                {% if site.cultural_importance %}
+                    <h6 class="mt-4">Importance culturelle</h6>
+                    <p>{{ site.cultural_importance|linebreaks }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Gallery -->
+        {% if site.gallery_images.exists %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-images me-2"></i>Galerie d'images</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for image in site.gallery_images.all %}
+                            <div class="col-md-4 mb-3">
+                                <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.caption }}">
+                                {% if image.caption %}
+                                    <p class="text-muted small mt-1">{{ image.caption }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Comments -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-comments me-2"></i>Commentaires</h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'heritage:add_comment' site.id %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="3" placeholder="Ajoutez un commentaire..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Envoyer
+                        </button>
+                    </form>
+                {% endif %}
+                
+                <div class="comments-section">
+                    {% for comment in comments %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.author.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"d M Y à H:i" }}</small>
+                            </div>
+                            <p class="mt-2 mb-0">{{ comment.content }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">Aucun commentaire pour le moment.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Info -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-info me-2"></i>Informations rapides</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <strong>Catégorie:</strong> {{ site.category.name }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Statut:</strong> 
+                        <span class="badge bg-{{ site.status|yesno:'success,warning' }}">
+                            {{ site.get_status_display }}
+                        </span>
+                    </li>
+                    {% if site.location %}
+                        <li class="mb-2">
+                            <strong>Ville:</strong> {{ site.location.city }}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Pays:</strong> {{ site.location.country }}
+                        </li>
+                    {% endif %}
+                    <li class="mb-2">
+                        <strong>Créé le:</strong> {{ site.created_at|date:"d F Y" }}
+                    </li>
+                    {% if site.created_by %}
+                        <li class="mb-2">
+                            <strong>Ajouté par:</strong> {{ site.created_by.username }}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Map -->
+        {% if site.location and site.location.latitude and site.location.longitude %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-map me-2"></i>Localisation</h6>
+                </div>
+                <div class="card-body">
+                    <div id="site-map" style="height: 300px;"></div>
+                    <div class="mt-2">
+                        <a href="{% url 'heritage:map' %}?lat={{ site.location.latitude }}&lng={{ site.location.longitude }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-expand me-1"></i>Voir sur la carte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Related Sites -->
+        {% if related_sites %}
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-link me-2"></i>Sites similaires</h6>
+                </div>
+                <div class="card-body">
+                    {% for related_site in related_sites %}
+                        <div class="d-flex mb-3">
+                            {% if related_site.image %}
+                                <img src="{{ related_site.image.url }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded me-3 bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-monument text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">
+                                    <a href="{% url 'heritage:detail' related_site.id %}">{{ related_site.name }}</a>
+                                </h6>
+                                <small class="text-muted">{{ related_site.category.name }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{% if site.location and site.location.latitude and site.location.longitude %}
+<script>
+// Initialize map (you'll need to add your preferred map library)
+document.addEventListener('DOMContentLoaded', function() {
+    const mapElement = document.getElementById('site-map');
+    if (mapElement) {
+        // Add your map initialization code here
+        // For example, with Leaflet:
+        // L.map('site-map').setView([{{ site.location.latitude }}, {{ site.location.longitude }}], 13);
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

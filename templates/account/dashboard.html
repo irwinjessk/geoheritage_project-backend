@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord - GeoHeritage{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <!-- Sidebar -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user me-2"></i>{{ user.username }}</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'account:dashboard' %}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-tachometer-alt me-2"></i>Tableau de bord
+                </a>
+                <a href="{% url 'account:profile' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user me-2"></i>Profil
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cog me-2"></i>Paramètres
+                </a>
+                <a href="{% url 'heritage:create' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-plus me-2"></i>Ajouter un site
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-history me-2"></i>Mon activité
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <!-- Main Content -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord</h2>
+            <span class="text-muted">
+                <i class="fas fa-calendar me-1"></i>
+                {% now "d F Y" %}
+            </span>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ sites_count }}</h4>
+                                <p class="mb-0">Sites créés</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-monument fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ approved_sites }}</h4>
+                                <p class="mb-0">Sites approuvés</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>{{ pending_sites }}</h4>
+                                <p class="mb-0">En attente</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-history me-2"></i>Activité récente</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_sites %}
+                    <div class="list-group list-group-flush">
+                        {% for site in recent_sites %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ site.name }}</h6>
+                                        <small class="text-muted">{{ site.created_at|date:"d M Y à H:i" }}</small>
+                                    </div>
+                                    <span class="badge bg-{{ site.status|yesno:'success,warning' }}">
+                                        {{ site.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune activité récente.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt me-2"></i>Actions rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{% url 'heritage:create' %}" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-plus me-2"></i>Ajouter un site patrimonial
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'heritage:list' %}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-list me-2"></i>Voir tous les sites
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+/* GeoHeritage - Account Styles */
+@import url('base.css');
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color), #34495e);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-sm) 0;
+}
+
+.navbar-brand {
+    font-family: var(--font-family-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white !important;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand:hover {
+    color: #f1c40f !important;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+}
+
+/* Sidebar */
+.user-sidebar {
+    background: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.user-sidebar .card-header {
+    background: linear-gradient(135deg, var(--secondary-color), var(--info-color));
+    color: white;
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.user-sidebar .list-group-item {
+    border: none;
+    border-bottom: 1px solid var(--light-color);
+    padding: var(--spacing-md);
+    transition: all var(--transition-fast);
+}
+
+.user-sidebar .list-group-item:hover {
+    background: var(--light-color);
+    padding-left: var(--spacing-lg);
+}
+
+.user-sidebar .list-group-item.active {
+    background: var(--primary-color);
+    color: white;
+    border-left: 4px solid #f1c40f;
+}
+
+/* Profile */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #f1c40f;
+    box-shadow: var(--shadow-md);
+}
+
+/* Stats */
+.stat-card {
+    background: white;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+    border-top: 4px solid var(--secondary-color);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Forms */
+.account-form {
+    background: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+}
+
+.account-form .form-control {
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
+    border: 2px solid var(--light-color);
+    transition: all var(--transition-fast);
+}
+
+.account-form .form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Badges */
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.user-badge.admin {
+    background: var(--accent-color);
+    color: white;
+}
+
+.user-badge.researcher {
+    background: var(--success-color);
+    color: white;
+}

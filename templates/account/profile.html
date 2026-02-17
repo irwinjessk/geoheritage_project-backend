@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil - GeoHeritage{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <!-- Sidebar -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user me-2"></i>{{ user.username }}</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'account:dashboard' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-tachometer-alt me-2"></i>Tableau de bord
+                </a>
+                <a href="{% url 'account:profile' %}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-user me-2"></i>Profil
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cog me-2"></i>Paramètres
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <!-- Profile Content -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user me-2"></i>Mon profil</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-1"></i>Prénom
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">
+                                    {{ form.first_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-1"></i>Nom
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">
+                                    {{ form.last_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user me-1"></i>Nom d'utilisateur
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Email
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-calendar me-1"></i>Date d'inscription
+                        </label>
+                        <input type="text" class="form-control" value="{{ user.date_joined|date:'d F Y' }}" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-sign-in-alt me-1"></i>Dernière connexion
+                        </label>
+                        <input type="text" class="form-control" value="{{ user.last_login|date:'d F Y à H:i' }}" readonly>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                        </button>
+                        <a href="#" class="btn btn-warning">
+                            <i class="fas fa-key me-2"></i>Changer le mot de passe
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Mes statistiques</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h4 class="text-primary">{{ total_sites }}</h4>
+                        <p class="mb-0">Sites créés</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-success">{{ approved_sites }}</h4>
+                        <p class="mb-0">Sites approuvés</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-warning">{{ pending_sites }}</h4>
+                        <p class="mb-0">En attente</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-info">{{ member_since }}</h4>
+                        <p class="mb-0">Jours membre</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-control {
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
