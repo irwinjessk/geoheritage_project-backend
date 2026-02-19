@@ -76,26 +76,25 @@
             <div class="card h-100">
                 {% if patrimoine.photo_url %}
                     <div class="image-container">
-                        {% if patrimoine.photo_url|slice:"0:5" == "http:" %}
-                            {% assign photo_url = patrimoine.photo_url|replace:"http:","https:" %}
-                        {% else %}
-                            {% assign photo_url = patrimoine.photo_url %}
-                        {% endif %}
-                        {% if "wikimedia" in photo_url %}
-                            {% assign proxy_url = photo_url|urlencode %}
-                            <img src="{% url 'heritage:proxy_image' proxy_url %}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                        {% if "wikimedia" in patrimoine.photo_url %}
+                            <!-- URL Wikimedia avec debug -->
+                            <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
                                  style="height: 200px; object-fit: cover;" 
                                  onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/400/200.jpg';"
                                  loading="lazy">
+                            <div class="image-overlay">
+                                <i class="fas fa-image"></i>
+                                <small>Wikimedia</small>
+                            </div>
                         {% else %}
-                            <img src="{{ photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                            <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
                                  style="height: 200px; object-fit: cover;" 
                                  onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/400/200.jpg';"
                                  loading="lazy">
+                            <div class="image-overlay">
+                                <i class="fas fa-image"></i>
+                            </div>
                         {% endif %}
-                        <div class="image-overlay">
-                            <i class="fas fa-image"></i>
-                        </div>
                     </div>
                 {% else %}
                     <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
@@ -190,17 +189,20 @@
         position: absolute;
         top: 10px;
         right: 10px;
-        background: rgba(44, 62, 80, 0.8);
+        background: rgba(44, 62, 80, 0.9);
         color: white;
         padding: 5px 10px;
         border-radius: 4px;
-        font-size: 12px;
-        opacity: 0;
+        font-size: 10px;
+        opacity: 1;
         transition: opacity 0.3s;
+        max-width: 200px;
+        word-break: break-all;
     }
     
-    .image-container:hover .image-overlay {
-        opacity: 1;
+    .image-overlay small {
+        color: #ffd700;
+        font-weight: bold;
     }
 </style>
 {% endblock %}
