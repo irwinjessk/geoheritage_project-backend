@@ -48,6 +48,16 @@
     </div>
 </div>
 
+<!-- Debug info -->
+{% if debug %}
+<div class="alert alert-info mt-3">
+    <h6>🔍 INFORMATIONS DE DÉBOGAGE</h6>
+    <p><strong>Nombre de sites:</strong> {{ patrimoines|length }}</p>
+    <p><strong>URL actuelle:</strong> {{ request.build_absolute_uri }}</p>
+    <p><strong>User agent:</strong> {{ request.META.HTTP_USER_AGENT|default:"Inconnu" }}</p>
+</div>
+{% endif %}
+
 <!-- Results Count -->
 <div class="mb-3">
     <p class="text-muted">
@@ -65,7 +75,10 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 {% if patrimoine.photo_url %}
-                    <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" style="height: 200px; object-fit: cover;">
+                    <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                         style="height: 200px; object-fit: cover;" 
+                         onerror="this.src='https://via.placeholder.com/400x200/2c3e50/ffffff?text={{ patrimoine.nom|urlencode }}';"
+                         loading="lazy">
                 {% else %}
                     <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                         <i class="fas fa-monument fa-3x text-muted"></i>

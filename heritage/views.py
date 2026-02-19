@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -14,16 +14,8 @@ from account.models import User
 
 
 def patrimoine_list(request):
-    """Page d'accueil avec tableau de bord et statistiques"""
+    """Liste des patrimoines (accessible à tous)"""
     patrimoines = Patrimoine.objects.all()
-    
-    # Statistiques
-    total_sites = patrimoines.count()
-    total_villes = patrimoines.values('ville').distinct().count()
-    types_count = patrimoines.values('type').annotate(count=Count('id'))
-    
-    # Sites récents
-    recent_sites = patrimoines.order_by('-created_at')[:3]
     
     # Filtres
     ville = request.GET.get('ville')
@@ -36,14 +28,10 @@ def patrimoine_list(request):
     
     context = {
         'patrimoines': patrimoines,
-        'recent_sites': recent_sites,
-        'total_sites': total_sites,
-        'total_villes': total_villes,
-        'types_count': types_count,
         'villes': Patrimoine.objects.values_list('ville', flat=True).distinct(),
         'types': Patrimoine.TYPE_CHOICES,
     }
-    return render(request, 'heritage/home.html', context)
+    return render(request, 'heritage/list.html', context)
 
 
 def patrimoine_detail(request, pk):

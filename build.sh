@@ -23,5 +23,8 @@ else:
     print('❌ Admin non trouvé')
 "
 
+echo "🔍 Diagnostic de production..."
+python manage.py diagnose_production
+
 echo "🎯 DÉPLOIEMENT TERMINÉ AVEC SUCCÈS"
 echo "🌐 L'application sera disponible sous peu"
