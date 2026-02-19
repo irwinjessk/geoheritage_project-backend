@@ -6,7 +6,27 @@
 <!-- Header with Image -->
 <div class="card mb-4">
     {% if patrimoine.photo_url %}
-        <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" style="height: 400px; object-fit: cover;">
+        <div class="image-container">
+            {% if "wikimedia" in patrimoine.photo_url %}
+                <!-- URL Wikimedia avec debug -->
+                <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                     style="height: 400px; object-fit: cover;" 
+                     onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/800/400.jpg';"
+                     loading="lazy">
+                <div class="image-overlay">
+                    <i class="fas fa-image"></i>
+                    <small>Wikimedia</small>
+                </div>
+            {% else %}
+                <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                     style="height: 400px; object-fit: cover;" 
+                     onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/800/400.jpg';"
+                     loading="lazy">
+                <div class="image-overlay">
+                    <i class="fas fa-image"></i>
+                </div>
+            {% endif %}
+        </div>
     {% else %}
         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
             <i class="fas fa-monument fa-5x text-muted"></i>
@@ -131,6 +151,29 @@
 <style>
     .card {
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .image-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .image-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(44, 62, 80, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 10px;
+        opacity: 1;
+        transition: opacity 0.3s;
+    }
+    
+    .image-overlay small {
+        color: #ffd700;
+        font-weight: bold;
     }
 </style>
 {% endblock %}
