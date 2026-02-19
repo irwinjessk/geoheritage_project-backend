@@ -6,6 +6,6 @@ class AccountConfig(AppConfig):
     name = 'account'
 
     def ready(self):
+        print("🔧 Démarrage de l'application Account")
         import account.signals
-        # NE PAS créer l'admin ici - ça cause des warnings
-        # L'admin sera créé manuellement ou via une commande de management
+        print("✅ Signals Account chargés")

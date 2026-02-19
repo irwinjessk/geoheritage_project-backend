@@ -12,4 +12,11 @@ class PatrimoineAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:  # Si c'est une création
             obj.created_by = request.user
+            print(f"🆕 Création du patrimoine '{obj.nom}' par {request.user.username}")
+        else:  # Si c'est une modification
+            print(f"✏️ Modification du patrimoine '{obj.nom}' par {request.user.username}")
         super().save_model(request, obj, form, change)
+    
+    def delete_model(self, request, obj):
+        print(f"🗑️ Suppression du patrimoine '{obj.nom}' par {request.user.username}")
+        super().delete_model(request, obj)
