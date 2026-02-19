@@ -3,14 +3,41 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_page
+import requests
 import json
 from account.decorators import can_edit_patrimoine, contributeur_required, get_user_level
 from .models import Patrimoine
 from account.models import User
+
+
+def proxy_image(request, url):
+    """Proxy pour les images externes - évite les problèmes CORS"""
+    try:
+        # Décoder l'URL
+        import urllib.parse
+        decoded_url = urllib.parse.unquote(url)
+        
+        # Vérifier que c'est une URL autorisée
+        allowed_domains = ['upload.wikimedia.org', 'commons.wikimedia.org', 'picsum.photos']
+        if not any(domain in decoded_url for domain in allowed_domains):
+            return HttpResponse("Domaine non autorisé", status=403)
+        
+        # Récupérer l'image
+        response = requests.get(decoded_url, timeout=10)
+        if response.status_code == 200:
+            return HttpResponse(
+                response.content,
+                content_type=response.headers.get('content-type', 'image/jpeg')
+            )
+        else:
+            return HttpResponse("Image non trouvée", status=404)
+    except Exception as e:
+        return HttpResponse(f"Erreur: {str(e)}", status=500)
 
 
 def patrimoine_list(request):

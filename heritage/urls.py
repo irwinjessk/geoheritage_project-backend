@@ -8,6 +8,7 @@ urlpatterns = [
     path('map/', views.patrimoine_map, name='map'),
     path('search/', views.patrimoine_search, name='search'),
     path('nearby/', views.patrimoine_nearby, name='nearby'),
+    path('proxy/<path:url>/', views.proxy_image, name='proxy_image'),
     path('<int:pk>/', views.patrimoine_detail, name='detail'),
     path('create/', views.patrimoine_create, name='create'),
     path('<int:pk>/update/', views.patrimoine_update, name='update'),

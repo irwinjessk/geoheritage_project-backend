@@ -76,10 +76,23 @@
             <div class="card h-100">
                 {% if patrimoine.photo_url %}
                     <div class="image-container">
-                        <img src="{{ patrimoine.photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
-                             style="height: 200px; object-fit: cover;" 
-                             onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/400/200.jpg';"
-                             loading="lazy">
+                        {% if patrimoine.photo_url|slice:"0:5" == "http:" %}
+                            {% assign photo_url = patrimoine.photo_url|replace:"http:","https:" %}
+                        {% else %}
+                            {% assign photo_url = patrimoine.photo_url %}
+                        {% endif %}
+                        {% if "wikimedia" in photo_url %}
+                            {% assign proxy_url = photo_url|urlencode %}
+                            <img src="{% url 'heritage:proxy_image' proxy_url %}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                                 style="height: 200px; object-fit: cover;" 
+                                 onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/400/200.jpg';"
+                                 loading="lazy">
+                        {% else %}
+                            <img src="{{ photo_url }}" class="card-img-top" alt="{{ patrimoine.nom }}" 
+                                 style="height: 200px; object-fit: cover;" 
+                                 onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ patrimoine.pk }}/400/200.jpg';"
+                                 loading="lazy">
+                        {% endif %}
                         <div class="image-overlay">
                             <i class="fas fa-image"></i>
                         </div>
